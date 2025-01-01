@@ -1,3 +1,4 @@
+import { Anime } from "../interfaces/Anime";
 import http from "./httpService";
 // import config from "../config.json";
 import { toast } from "react-toastify";
@@ -25,4 +26,13 @@ export function getAll(pageDetails : any) {
 	if (author) url += `&author=${author}`;
 
 	return http.get(url);
+}
+
+export function save(values: Anime) {
+	try {
+		return http.post("/animes", values);
+	} catch (error) {
+		toast.error("Failed to save anime");
+		throw error;
+	}
 }

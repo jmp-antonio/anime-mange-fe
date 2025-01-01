@@ -1,0 +1,13 @@
+input[type="text"],
+input[type="email"],
+input[type="password"],
+option,
+textarea.form-control.form-control-sm {
+	font-size: 0.8rem;
+}
+
+.error {
+	color: red;
+	font-weight: bold;
+	font-size: 0.7rem;
+}

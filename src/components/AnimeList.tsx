@@ -65,7 +65,7 @@ const AnimeList = () => {
                             {anime.title}
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            Author: {anime.author.full_name}
+                            Author: {anime.author?.full_name}
                         </p>
                         <Button>
                             Read more
