@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 
 const apiEndpoint = "/animes";
 
-function animeUrl(userId : number) {
-	return `${apiEndpoint}/${userId}`;
+function animeUrl(id : number | undefined) {
+	return `${apiEndpoint}/${id}`;
 }
 
 export function getAll(pageDetails : any) {
@@ -33,6 +33,28 @@ export function save(values: Anime) {
 		return http.post("/animes", values);
 	} catch (error) {
 		toast.error("Failed to save anime");
+		throw error;
+	}
+}
+
+export function getById(id: number | undefined) {
+	return http.get(`${apiEndpoint}/${id}`);
+}
+
+export function update(id: number | undefined, values: Anime) {
+	try {
+		return http.put(animeUrl(id), values);
+	} catch (error) {
+		toast.error("Failed to update anime");
+		throw error;
+	}
+}
+
+export function deleteAnime(id: number | undefined) {
+	try {
+		return http.delete(animeUrl(id));
+	} catch (error) {
+		toast.error("Failed to delete anime");
 		throw error;
 	}
 }

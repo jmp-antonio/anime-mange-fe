@@ -1,25 +1,22 @@
-import { Button, Label, Modal, TextInput } from 'flowbite-react'
-import { Form, Formik } from 'formik';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Anime } from '../interfaces/Anime';
-import FormikControl from './common/form/FormikControl';
+import { Author } from '../interfaces/Author';
 import * as Yup from 'yup';
 import { getOptions } from '../services/authorServices';
-import { Author } from '../interfaces/Author';
-import { save } from '../services/animeService';
+import { Button, Modal } from 'flowbite-react';
+import { Form, Formik } from 'formik';
+import FormikControl from './common/form/FormikControl';
+import { update } from '../services/animeService';
 import { toast } from 'react-toastify';
 
 type Props = {
+    anime: Anime,
+    openEditModal: boolean,
+    setOpenEditModal: React.Dispatch<React.SetStateAction<boolean>>,
     loadAnimesTable: () => Promise<void>
 }
 
-const AddAnime = ({loadAnimesTable} : Props) => {
-    const [openModal, setOpenModal] = useState<boolean>(false);
-
-    const [anime, seAnime] = useState<Anime>({
-        title: "",
-        author_id: undefined,
-    });
+const EditAnime = ({anime, openEditModal, setOpenEditModal, loadAnimesTable} : Props) => {
 
     const [authorOptions, setAuthorOptions] = useState<Author[]>([]);
 
@@ -35,17 +32,16 @@ const AddAnime = ({loadAnimesTable} : Props) => {
 
     const onSubmit = async (values: Anime) => {
         try {
-            const { data: response } = await save(values);
+            const { data: response } = await update(anime.id, values);
             const { status, message } = response;
             if (status === "success") {
                 toast.success(message);
-                setOpenModal(false);
+                setOpenEditModal(false);
                 loadAnimesTable()
-              
             }
         } catch (error) {
-            console.error("Failed to save anime:", error);
-            toast.error("Failed to save anime. Please try again.");
+            console.error("Failed to update anime:", error);
+            toast.error("Failed to update anime. Please try again.");
         }
     };
     
@@ -62,12 +58,11 @@ const AddAnime = ({loadAnimesTable} : Props) => {
 
   return (
     <div className='row max-w flex justify-end mb-5'>
-      <Button size='sm' onClick={() => setOpenModal(true)}>Create</Button>
-      <Modal show={openModal} size="lg" popup onClose={() => setOpenModal(false)}>
+      <Modal show={openEditModal} size="lg" popup onClose={() => setOpenEditModal(false)}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Create</h3>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit</h3>
             <Formik
               initialValues={anime}
               validationSchema={validationSchema}
@@ -110,4 +105,4 @@ const AddAnime = ({loadAnimesTable} : Props) => {
   )
 }
 
-export default AddAnime
+export default EditAnime
