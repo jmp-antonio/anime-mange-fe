@@ -6,7 +6,7 @@ import "./Form.css";
 function Input(props) {
 	const { label, name, placeholder, ...rest } = props;
 	return (
-		<div class="mb-5">
+		<div className="mb-5">
 			{label &&
 				<label htmlFor={name} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 					{label}
