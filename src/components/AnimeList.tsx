@@ -15,11 +15,13 @@ import { getMangaLinkById } from '../services/mangaLinkService';
 import EditMangaLinks from './EditMangaLinks';
 import PageInfo from './common/table/PageDetails';
 import { navigatePage } from '../utils/tableUtils';
+import FilterAnime from './FilterAnime';
+import { AnimePageDetails } from '../interfaces/AnimePageDetails';
 
-interface AnimePageDetails extends PageDetails {
-    title: string | null,
-    author: string | null,
-}
+// interface AnimePageDetails extends PageDetails {
+//     title: string | null,
+//     author: string | null,
+// }
 
 const AnimeList = () => {
     const [animes, setAnimes] = useState<Anime[]>([]);
@@ -33,11 +35,13 @@ const AnimeList = () => {
     });
     const isLoading = useRef(false);
 
-    const loadAnimesTable = async () => {
+    const loadAnimesTable = async (newPageDetails?: AnimePageDetails) => {
         if (isLoading.current) return;
         isLoading.current = true;
+        
+        const detailsToUse = newPageDetails || pageDetails;
 
-        const { data } = await getAll(pageDetails);
+        const { data } = await getAll(detailsToUse);
         const {
             data: animes,
             current_page,
@@ -137,7 +141,10 @@ const AnimeList = () => {
     return (
         <>
             {/* ANIME COMPONENTS */}
-            <AddAnime loadAnimesTable={loadAnimesTable}/>    
+            <div className='flex justify-between'>
+                <FilterAnime animePageDetials={pageDetails} setPageDetails={setPageDetails} loadAnimesTable={loadAnimesTable}/>
+                <AddAnime loadAnimesTable={loadAnimesTable}/>    
+            </div>
             {openEditModal && <EditAnime anime={anime} openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} loadAnimesTable={loadAnimesTable}/>}
             {openDeleteModal && <DeleteAnime animeIdToDelete={animeIdToDelete} openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} loadAnimesTable={loadAnimesTable} />}
             
@@ -149,7 +156,7 @@ const AnimeList = () => {
             <div className="grid grid-cols-3 gap-3">
                 {animes.length > 0 ? (
                 animes.map(anime => (
-                    <div>
+                    <div key={anime.id}>
                         <Card key={anime.id} className="max-w">
                             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 {anime.title}
