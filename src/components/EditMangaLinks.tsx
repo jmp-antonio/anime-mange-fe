@@ -1,26 +1,20 @@
 import React, { useState } from 'react'
-import { MangaLink } from '../interfaces/MangaLink';
+import { MangaLink } from '../interfaces/MangaLink'
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { Button, Modal } from 'flowbite-react';
 import { Form, Formik } from 'formik';
 import FormikControl from './common/form/FormikControl';
-import { save } from '../services/mangaLinkService';
+import { updateMangaLink } from '../services/mangaLinkService';
 
 type Props = {
-    animeId: number | undefined,
-    openMangaLinkModal: boolean,
-    setOpenAddMangaLinkModal: React.Dispatch<React.SetStateAction<boolean>>,
+    mangaLink: MangaLink,
+    openEditMangaLink: boolean,
+    setOpenEditMangaLink: React.Dispatch<React.SetStateAction<boolean>>,
     loadAnimesTable: () => Promise<void>
 }
 
-const AddMangaLink = ({ animeId, openMangaLinkModal, setOpenAddMangaLinkModal, loadAnimesTable }: Props) => {
-    
-    const [mangaLink, setMangaLink] = useState<MangaLink>({
-        url: "",
-        anime_id: animeId ?? 0,
-    });
-
+const EditMangaLinks = ({mangaLink, openEditMangaLink, setOpenEditMangaLink, loadAnimesTable} : Props) => {
     const validationSchema = Yup.object<{
         id?: string;
         url: string;
@@ -33,27 +27,27 @@ const AddMangaLink = ({ animeId, openMangaLinkModal, setOpenAddMangaLinkModal, l
 
     const onSubmit = async (values: MangaLink) => {
         try {
-            const { data: response } = await save(values);
+            const { data: response } = await updateMangaLink(mangaLink.id, values);
             const { status, message } = response;
             if (status === "success") {
                 toast.success(message);
-                setOpenAddMangaLinkModal(false);
+                setOpenEditMangaLink(false);
                 loadAnimesTable()
               
             }
         } catch (error) {
-            console.error("Failed to save anime:", error);
-            toast.error("Failed to save anime. Please try again.");
+            console.error("Failed to save manga link:", error);
+            toast.error("Failed to save manga link. Please try again.");
         }
     };
     
     return (
         <div className='row max-w flex justify-end mb-5'>
-        <Modal show={openMangaLinkModal} size="lg" popup onClose={() => setOpenAddMangaLinkModal(false)}>
+        <Modal show={openEditMangaLink} size="lg" popup onClose={() => setOpenEditMangaLink(false)}>
             <Modal.Header />
             <Modal.Body>
             <div className="space-y-6">
-                <h3 className="text-xl font-medium text-gray-900 dark:text-white">Create</h3>
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit</h3>
                 <Formik
                     initialValues={mangaLink}
                     validationSchema={validationSchema}
@@ -86,4 +80,4 @@ const AddMangaLink = ({ animeId, openMangaLinkModal, setOpenAddMangaLinkModal, l
     )
 }
 
-export default AddMangaLink
+export default EditMangaLinks

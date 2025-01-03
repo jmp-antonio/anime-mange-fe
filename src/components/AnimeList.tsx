@@ -10,6 +10,11 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete, MdEdit } from "react-icons/md";
 import AddMangaLink from './AddMangaLink';
 import DeleteMangaLink from './DeleteMangaLink';
+import { MangaLink } from '../interfaces/MangaLink';
+import { getMangaLinkById } from '../services/mangaLinkService';
+import EditMangaLinks from './EditMangaLinks';
+import PageInfo from './common/table/PageDetails';
+import { navigatePage } from '../utils/tableUtils';
 
 interface AnimePageDetails extends PageDetails {
     title: string | null,
@@ -58,6 +63,12 @@ const AnimeList = () => {
         isLoading.current = false;
     };
 
+    const pageChange = (direction: string) => {
+        const newPageDetails = navigatePage(pageDetails, direction);
+        setPageDetails(newPageDetails);
+        loadAnimesTable();
+    };
+
     useEffect(() => {
         loadAnimesTable();
     }, []);
@@ -99,7 +110,21 @@ const AnimeList = () => {
     }
 
     /* 
-        handle delete manga
+        handle edit manga link
+    */
+    const [mangaLink, setMangaLink] = useState<MangaLink>({});
+    const [openEditMangaLink, setOpenEditMangaLink] = useState<boolean>(false);
+    
+    const handleEditMangaLinkClick = async (id: number | undefined) => {
+        const { data } = await getMangaLinkById(id);
+        const { data: mangaLink } = data;
+
+        setMangaLink(mangaLink);
+        setOpenEditMangaLink(true);
+    }
+
+    /* 
+        handle delete manga link
     */
     const [mangaLinkIdToDelete, setMangaLinkIdToDelete] = useState<number | undefined>();
     const [openDeleteMangaLinkModal, setOpenDeleteMangaLinkModal] = useState<boolean>(false);
@@ -118,6 +143,7 @@ const AnimeList = () => {
             
             {/* MANGA LINK COMPONENTS */}
             {openAddMangaLink && <AddMangaLink animeId={animeIdAddMangaLink} openMangaLinkModal={openAddMangaLink} setOpenAddMangaLinkModal={setOpenAddMangaLink} loadAnimesTable={loadAnimesTable} />}
+            {openEditMangaLink && <EditMangaLinks mangaLink={mangaLink} openEditMangaLink={openEditMangaLink} setOpenEditMangaLink={setOpenEditMangaLink} loadAnimesTable={loadAnimesTable}/>}
             {openDeleteMangaLinkModal && <DeleteMangaLink mangaLinkIdToDelete={mangaLinkIdToDelete} openDeleteMangaLinkModal={openDeleteMangaLinkModal} setOpenDeleteMangaLinkModal={setOpenDeleteMangaLinkModal} loadAnimesTable={loadAnimesTable} />}
             
             <div className="grid grid-cols-3 gap-3">
@@ -139,13 +165,6 @@ const AnimeList = () => {
                                     </Button>
                                 </div>
                                 {(anime.manga_links && anime.manga_links.length > 0) ? 
-                                    // <ListGroup className='mt-4'>
-                                    //     {anime.manga_links?.map(link => (
-                                    //         <ListGroup.Item key={link.id} href={link.url}>
-                                    //             {link.url}
-                                    //         </ListGroup.Item>
-                                    //     ))}
-                                    // </ListGroup> :
                                     <Table striped>
                                         <Table.Body className="divide-y">
                                             {anime.manga_links.map(link => (
@@ -157,7 +176,7 @@ const AnimeList = () => {
                                                     </Table.Cell>
                                                     <Table.Cell className='whitespace-nowrap flex justify-end py-2'>
                                                         <div className='flex space-x-2'>
-                                                            <Button size="xs" onClick={() => handleEditClick(link.id)}>
+                                                            <Button size="xs" onClick={() => handleEditMangaLinkClick(link.id)}>
                                                                 <MdEdit />
                                                             </Button>
                                                             <Button size="xs" color='failure' onClick={() => handleDeleteMangaLinkClick(link.id)}>
@@ -190,6 +209,16 @@ const AnimeList = () => {
                     <p>No animes available.</p>
                 }
             </div>
+            {animes.length > 0 &&
+                <PageInfo
+                    current_page={pageDetails.current_page}
+                    from={pageDetails.from || 0}
+                    to={pageDetails.to || 0}
+                    total={pageDetails.total || 0}
+                    last_page={pageDetails.last_page || 0}
+                    per_page={pageDetails.per_page}
+                    pageChange={pageChange}
+                />}
         </>
     );
 };

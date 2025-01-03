@@ -18,11 +18,11 @@ export function save(values: Anime) {
 	}
 }
 
-export function getById(id: number | undefined) {
+export function getMangaLinkById(id: number | undefined) {
 	return http.get(`${apiEndpoint}/${id}`);
 }
 
-export function update(id: number | undefined, values: Anime) {
+export function updateMangaLink(id: number | undefined, values: Anime) {
 	try {
 		return http.put(mangaLinkUrl(id), values);
 	} catch (error) {
