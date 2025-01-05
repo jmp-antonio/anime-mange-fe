@@ -3,8 +3,8 @@ import { Author } from "../../interfaces/Author";
 
 type Props = {
   authors: Author[],
-  onEdit: (id: number) => void,
-  onDelete: (id: number) => void
+  onEdit: (id: number | undefined) => void,
+  onDelete: (id: number | undefined) => void
 }
 
 const AuthorsTable = ({ authors, onEdit, onDelete } : Props) => {
@@ -18,7 +18,7 @@ const AuthorsTable = ({ authors, onEdit, onDelete } : Props) => {
         </Table.Head>
         <Table.Body className="divide-y">
           {authors.map((author) => (
-            <Table.Row key={author.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Table.Row key={author.id} className="bg-white text-black dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell>
                     {author.first_name}
                 </Table.Cell>

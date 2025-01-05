@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Author } from '../../interfaces/Author';
 import { AuthorPageDetails } from '../../interfaces/AuthorPageDetails';
-import { getAll } from '../../services/authorServices';
+import { getAll, getById } from '../../services/authorServices';
 import { navigatePage } from '../../utils/tableUtils';
 import AuthorsTable from './AuthorsTable';
 import AddAuthor from './AddAuthor';
 import { Button } from 'flowbite-react';
+import EditAuthor from './EditAuthor';
+import DeleteAuthor from './DeleteAuthor';
 
 const Authors = () => {
     const [authors, setAuthors] = useState<Author[]>([]);
@@ -57,19 +59,36 @@ const Authors = () => {
         loadAuthorsTable();
     };
 
-    const handleEdit = (id: number) => {
-        // Implement edit functionality
-        console.log("Edit author with id:", id);
-    };
-
-    const handleDelete = (id: number) => {
-        // Implement delete functionality
-        console.log("Delete author with id:", id);
-    };
-
     useEffect(() => {
         loadAuthorsTable();
     }, []);
+
+
+    /* 
+        handle edit
+    */
+    const [author, setAuthor] = useState<Author>({});
+    const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+    
+    const handleEditClick = async (id: number | undefined) => {
+        const { data } = await getById(id);
+        const { data: author } = data;
+
+        setAuthor(author);
+        setOpenEditModal(true);
+    }
+
+    /* 
+        handle delete
+    */
+    const [authorIdToDelete, setAuthorIdToDelete] = useState<number | undefined>();
+    const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+
+    const handleDeleteClick = (id: number | undefined) => {
+        setAuthorIdToDelete(id);
+        setOpenDeleteModal(true);
+    }
+
     return (
         <>
             <div className='flex justify-between'>
@@ -77,9 +96,12 @@ const Authors = () => {
                 {/* <FilterAnime animePageDetials={pageDetails} setPageDetails={setPageDetails} loadAnimesTable={loadAnimesTable}/> */}
                 <AddAuthor loadAuthorsTable={loadAuthorsTable}/>    
             </div>
+            {openEditModal && <EditAuthor author={author} openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} loadAuthorsTable={loadAuthorsTable}/>}
+            {openDeleteModal && <DeleteAuthor authorIdToDelete={authorIdToDelete} openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} loadAuthorsTable={loadAuthorsTable} />}
+
             <div className='flex justify-center my-5'>
                 <div className="w-full max-w-8xl">
-                        <AuthorsTable authors={authors} onEdit={handleEdit} onDelete={handleDelete} />
+                        <AuthorsTable authors={authors} onEdit={handleEditClick} onDelete={handleDeleteClick} />
                 </div>
             </div>
         </>
