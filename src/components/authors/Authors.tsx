@@ -8,6 +8,7 @@ import AddAuthor from './AddAuthor';
 import { Button } from 'flowbite-react';
 import EditAuthor from './EditAuthor';
 import DeleteAuthor from './DeleteAuthor';
+import PageInfo from '../common/table/PageDetails';
 
 const Authors = () => {
     const [authors, setAuthors] = useState<Author[]>([]);
@@ -59,6 +60,20 @@ const Authors = () => {
         loadAuthorsTable();
     };
 
+    const onSort = (path: string) => {
+        const newPageDetails = { ...pageDetails };
+
+        if (path === newPageDetails.sort_by) {
+            newPageDetails.sort_direction = newPageDetails.sort_direction === "asc" ? "desc" : "asc";
+        } else {
+            newPageDetails.sort_by = path;
+            newPageDetails.sort_direction = "asc";
+        }
+
+        setPageDetails(newPageDetails);
+        loadAuthorsTable(newPageDetails);
+    };
+
     useEffect(() => {
         loadAuthorsTable();
     }, []);
@@ -101,7 +116,17 @@ const Authors = () => {
 
             <div className='flex justify-center my-5'>
                 <div className="w-full max-w-8xl">
-                        <AuthorsTable authors={authors} onEdit={handleEditClick} onDelete={handleDeleteClick} />
+                    <AuthorsTable authors={authors} onEdit={handleEditClick} onDelete={handleDeleteClick} pageDetails={pageDetails} onSort={onSort} />
+                    {authors.length > 0 &&
+                        <PageInfo
+                            current_page={pageDetails.current_page}
+                            from={pageDetails.from || 0}
+                            to={pageDetails.to || 0}
+                            total={pageDetails.total || 0}
+                            last_page={pageDetails.last_page || 0}
+                            per_page={pageDetails.per_page}
+                            pageChange={pageChange}
+                        />}
                 </div>
             </div>
         </>
