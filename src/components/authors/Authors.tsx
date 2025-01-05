@@ -9,6 +9,7 @@ import { Button } from 'flowbite-react';
 import EditAuthor from './EditAuthor';
 import DeleteAuthor from './DeleteAuthor';
 import PageInfo from '../common/table/PageDetails';
+import FilterAuthor from './FilterAuthor';
 
 const Authors = () => {
     const [authors, setAuthors] = useState<Author[]>([]);
@@ -107,8 +108,7 @@ const Authors = () => {
     return (
         <>
             <div className='flex justify-between'>
-                <Button>Button</Button>
-                {/* <FilterAnime animePageDetials={pageDetails} setPageDetails={setPageDetails} loadAnimesTable={loadAnimesTable}/> */}
+                <FilterAuthor authorPageDetails={pageDetails} setPageDetails={setPageDetails} loadAuthorsTable={loadAuthorsTable}/>
                 <AddAuthor loadAuthorsTable={loadAuthorsTable}/>    
             </div>
             {openEditModal && <EditAuthor author={author} openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} loadAuthorsTable={loadAuthorsTable}/>}
