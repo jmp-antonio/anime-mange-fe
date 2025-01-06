@@ -4,6 +4,7 @@ import AnimeList from './components/AnimeList';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Authors from './components/authors/Authors';
+import RandomQuote from './components/quote/RandomQuote';
 // import Authors from './components/Authors';
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
 			/>
       <AppNavbar />
       <section className='my-5 mx-8'>
+        <RandomQuote />
         <Routes>
           <Route path="/authors" element={<Authors />} />
           <Route path="/" element={<AnimeList />} />
